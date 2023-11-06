@@ -37,33 +37,202 @@ dados_01 <- select(dados,
                    #variáveis de identificação
                    Ano, 
                    Trimestre,
-                   #UPA #não ta rodando
+                ##UPA #não ta rodando
                    Estrato, 
                    'num_domicilio' = V1008, 
-                   #variáveis geográficas
+                   
+                   # cracterísticas geográficas
                    Capital,
                    UF,
                    'RM_capital' = RM_RIDE,
-                   #
                    "pessoas_p/domi" = V2001,
                    V2005,
+                
                    # carcaterístcas individuais
                    'sexo' = V2007,
                    'idade' = V2009,
                    'mes_niver' = V20081,
-                   #'faixa_etaria' = VD2006, # não achei nem a descrição PNAD
+                ##'faixa_etaria' = VD2006, # não achei nem a descrição PNAD
                    'raça' = V2010,
                    'renda' = VD4019,
+                
                    # características educ
                    'alfabetizado' = V3001,
                    'nivel_educ' = VD3004,
                    'anos_educ' = VD3005,
+                
                    # características trabalho
                    'carteira_assinada' = V4029,
                    'desalento' = VD4005,
                    'motivo_desalento' = VD4023,
                    'subocupação' = VD4004,
                    'tempo_proc_emprego' = V4076,
+                   'posi_ocupação' = VD4009,
+                   'horas_semanais_trabalhadas' = VD4031,
+                
+                
+                   # variáveis de teste
+                   'empregado' = VD4002,
+                   'trabalho_remunerado' = V40331,
+                   'pessoas_fora_da_força' = VD4001
+                   
                    )
+```
+
+```{r filtrand os dados para nossa região e grupo etário}
+dados_02 <- dados_01 %>%
+  filter(UF == 31 | UF == 32 | UF == 33 | UF == 35) %>%
+  filter(idade >= 14 & idade <= 65)
+```
+
+
+```{r criando variáveis}
+dados_03 <- mutate(dados_02, 
+                   'sal_h' = renda/(horas_semanais_trabalhadas*4))
+```
+
+```{r}
+nrow(dados_03)
+nrow(dados_h) + nrow(dados_m)
+329763 + 8595 + 24179 + 174356
+```
+
+# lebra b
+
+```{r pessoas com trabalho remurado}
+pessoas_trabalho_remunerado <- filter(dados_03, empregado == 1) %>% # filtrando quem trabalha
+  filter(!is.na(trabalho_remunerado))                               # filtrando quem recebe 
+
+nrow(pessoas_trabalho_remunerado) # pessoas com trabalho remunerado
+nrow(pessoas_trabalho_remunerado) / nrow(dados_03)
+```
+
+```{r pessoas com trabalho não remurado}
+pessoas_s_trabalho_remunerado <- filter(dados_03, empregado == 1) %>% # filtrando quem trabalha
+  filter(is.na(trabalho_remunerado))                                  # filtrando quem não recebe 
+
+nrow(pessoas_s_trabalho_remunerado)
+nrow(pessoas_s_trabalho_remunerado) / nrow(dados_03)
+```
+```{r}
+pessoas_desempregadas <- filter(dados_03, empregado == 2)
+
+nrow(pessoas_desempregadas)
+nrow(pessoas_desempregadas) / nrow(dados_03)
+```
+
+```{r}
+pessoas_fora_da_força <- filter(dados_03, pessoas_fora_da_força == 2) 
+
+nrow(pessoas_fora_da_força)
+nrow(pessoas_fora_da_força) / nrow(dados_03)
+```
+
+####  para homens
+
+```{r}
+dados_h <- filter(dados_03, sexo == 1) #homem
+```
+
+```{r pessoas com trabalho remurado}
+pessoas_trabalho_remunerado <- filter(dados_h, empregado == 1) %>% # filtrando quem trabalha
+  filter(!is.na(trabalho_remunerado))                               # filtrando quem recebe 
+
+nrow(pessoas_trabalho_remunerado) # pessoas com trabalho remunerado
+nrow(pessoas_trabalho_remunerado) / nrow(dados_h)
+```
+
+```{r homens com trabalho não remurado}
+pessoas_s_trabalho_remunerado <- filter(dados_h, empregado == 1) %>% # filtrando quem trabalha
+  filter(is.na(trabalho_remunerado))                                  # filtrando quem não recebe 
+
+nrow(pessoas_s_trabalho_remunerado)
+nrow(pessoas_s_trabalho_remunerado) / nrow(dados_h)
+```
+
+```{r homens desempregados}
+pessoas_desempregadas <- filter(dados_h, empregado == 2)
+
+nrow(pessoas_desempregadas)
+nrow(pessoas_desempregadas) / nrow(dados_h)
+```
+
+```{r homens fora da força de trabalho}
+pessoas_fora_da_força <- filter(dados_h, pessoas_fora_da_força == 2) 
+
+nrow(pessoas_fora_da_força)
+nrow(pessoas_fora_da_força) / nrow(dados_h)
+```
+####  para mulheres
+
+```{r}
+dados_m <- filter(dados_03, sexo == 2) #mullher
+```
+
+```{r mulheres com trabalho remurado}
+pessoas_trabalho_remunerado <- filter(dados_m, empregado == 1) %>% # filtrando quem trabalha
+  filter(!is.na(trabalho_remunerado))                               # filtrando quem recebe 
+
+nrow(pessoas_trabalho_remunerado) # pessoas com trabalho remunerado
+nrow(pessoas_trabalho_remunerado) / nrow(dados_m)
+```
+
+```{r mulheres com trabalho não remurado}
+pessoas_s_trabalho_remunerado <- filter(dados_m, empregado == 1) %>% # filtrando quem trabalha
+  filter(is.na(trabalho_remunerado))                                  # filtrando quem não recebe 
+
+nrow(pessoas_s_trabalho_remunerado)
+nrow(pessoas_s_trabalho_remunerado) / nrow(dados_m)
+```
+
+```{r mulheres desempregadas}
+pessoas_desempregadas <- filter(dados_m, empregado == 2)
+
+nrow(pessoas_desempregadas)
+nrow(pessoas_desempregadas) / nrow(dados_m)
+```
+
+```{r mulheres fora da força de trabalho}
+pessoas_fora_da_força <- filter(dados_m, pessoas_fora_da_força == 2) 
+
+nrow(pessoas_fora_da_força)
+nrow(pessoas_fora_da_força) / nrow(dados_m)
+```
+
+
+
+
+
+
+
+
+```{r gráficos}
+ggplot(dados) + 
+  geom_boxplot()
+```
+
+
+
+# letra c
+
+
+```{r informações a cerca da renda de cada profissão}
+renda_profissão <- filter(dados_03, posi_ocupação == 10) %>%
+  select(renda) %>%
+  filter(!is.na(renda)) 
+
+renda_profissão_num <- renda_profissão$renda
+
+mean(renda_profissão_num)
+sd(renda_profissão_num)
+min(renda_profissão_num)
+max(renda_profissão_num) #na.rm = T
+```
+
+
+
+# gráficos
+```{r}
+
 ```
 
