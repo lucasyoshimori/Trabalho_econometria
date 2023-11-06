@@ -1,1 +1,69 @@
-#teste
+---
+title: "Trabalho Econometria"
+author: "Lucas Mesquita, Arthur Marins, Bruno, Alex"
+output:
+  html_document:
+    df_print: paged
+---
+Pacotes utilizados
+
+```{r eval = F}
+library(tidyverse)
+library(magrittr)
+library(wooldridge)
+library(robustbase)
+library(sandwich)
+library(clubSandwich)
+library(plm) 
+library(car) 
+library(lmtest)
+library(kableExtra) 
+library(broom)
+library(stargazer)
+library(modelsummary)
+library(jtools)
+library(readstata13)
+```
+
+```{r lendo a base de dados}
+df.pnadc.painel1 <- readstata13::read.dta13(file = "PNAD_painel_3_rs.dta")
+
+dados <- df.pnadc.painel1
+str(df.pnadc.painel1)
+```
+
+```{r selecionando as variáveis de interesse}
+dados_01 <- select(dados, 
+                   #variáveis de identificação
+                   Ano, 
+                   Trimestre,
+                   #UPA #não ta rodando
+                   Estrato, 
+                   'num_domicilio' = V1008, 
+                   #variáveis geográficas
+                   Capital,
+                   UF,
+                   'RM_capital' = RM_RIDE,
+                   #
+                   "pessoas_p/domi" = V2001,
+                   V2005,
+                   # carcaterístcas individuais
+                   'sexo' = V2007,
+                   'idade' = V2009,
+                   'mes_niver' = V20081,
+                   #'faixa_etaria' = VD2006, # não achei nem a descrição PNAD
+                   'raça' = V2010,
+                   'renda' = VD4019,
+                   # características educ
+                   'alfabetizado' = V3001,
+                   'nivel_educ' = VD3004,
+                   'anos_educ' = VD3005,
+                   # características trabalho
+                   'carteira_assinada' = V4029,
+                   'desalento' = VD4005,
+                   'motivo_desalento' = VD4023,
+                   'subocupação' = VD4004,
+                   'tempo_proc_emprego' = V4076,
+                   )
+```
+
